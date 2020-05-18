@@ -10,7 +10,7 @@ from xlwt import Workbook
 import os
 import sys
 
-KEY = 'AIzaSyAPNZ3OfLPiOXpKKbcHd28vLvgSOea6Gm8'  # for example, this key is no longer valid
+KEY = ''  # Enter here a valid google API key 
 COLUMNS = ['Address', 'Type']  # change here according to your columns in the original file
 SHEET_NAME = "Sheet 1"
 OUTPUT_NAME = "/Users/edene_236/Desktop/GoogleMaps Locations.xls"
