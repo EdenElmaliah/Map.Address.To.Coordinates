@@ -2,6 +2,7 @@
 This script receives an excel file containing addresses and other fields of interest, and returns a new table
 containing these fields + the longtitude & langtitude values of each address
 NOTE: You need a valid KEY from google maps API in order for this code to work
+@author: Eden Elmaliah
 """
 import pandas as pd
 import googlemaps
