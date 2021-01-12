@@ -12,9 +12,9 @@ import sys
 from tqdm import tqdm
 
 KEY = ''  # Enter here a valid google API key
-COLUMNS = []  # change here according to your columns in the original file
+COLUMNS = ['Tag']  # change here according to your columns in the original file (additional columns)
 SHEET_NAME = "Sheet 1"
-OUTPUT_NAME = "GoogleMaps Locations.xls"
+OUTPUT_NAME = "output_example.xlsx"
 
 
 if __name__ == "__main__":
