@@ -6,14 +6,15 @@ NOTE: You need a valid KEY from google maps API in order for this code to work
 """
 import pandas as pd
 import googlemaps
-from xlwt import Workbook
+from pandas import ExcelWriter
 import os
 import sys
+from tqdm import tqdm
 
-KEY = ''  # Enter here a valid google API key 
-COLUMNS = ['Address', 'Type']  # change here according to your columns in the original file
+KEY = ''  # Enter here a valid google API key
+COLUMNS = []  # change here according to your columns in the original file
 SHEET_NAME = "Sheet 1"
-OUTPUT_NAME = "/Users/edene_236/Desktop/GoogleMaps Locations.xls"
+OUTPUT_NAME = "GoogleMaps Locations.xls"
 
 
 if __name__ == "__main__":
@@ -23,37 +24,29 @@ if __name__ == "__main__":
         exit()
 
     filename = sys.argv[1]
-    file = pd.read_excel(filename, header=None)
-    file.columns = COLUMNS
+    file = pd.read_excel(filename)
+    streets = file['Street']
+    numbers = file['House']
 
-    additional_fields = COLUMNS[1:]
     gmaps = googlemaps.Client(key=KEY)
-    addresses = dict()
-    for i in range(len(file)):
-        address = file.at[i, 'Address']
-        addresses[address] = dict()
+    columns = ['Address', 'x', 'y'] + COLUMNS
+    df = dict()
+    for col in columns:
+        df[col] = []
+
+    for i in tqdm(range(len(file))):
+        street = streets[i]
+        number = numbers[i]
+        address = f"{street} {number}, ירושלים"
         loc = gmaps.geocode(address)
-        addresses[address]['x'] = loc[0]['geometry']['location']['lng']
-        addresses[address]['y'] = loc[0]['geometry']['location']['lat']
-        for field in additional_fields:
-            addresses[address][field] = file.at[i, field]
+        for l, name in zip(['lng', 'lat'], ['x', 'y']):
+            add = loc[0]['geometry']['location'][l]
+            df[name].append(add)
+        df['Address'].append(address)
+        for col in COLUMNS:
+            df[col].append(file[col][i])
 
-    wb = Workbook(encoding='utf-8')
-    sheet1 = wb.add_sheet(SHEET_NAME, cell_overwrite_ok=True)
-
-    new_cols = COLUMNS.copy()
-    new_cols.insert(1, 'y')
-    new_cols.insert(1, 'x')
-
-    for i, header in enumerate(new_cols):
-        sheet1.write(0, i, header)
-
-    for i, add in enumerate(addresses):
-        sheet1.write(i + 1, 0, add)
-        sheet1.write(i + 1, 1, addresses[add]['x'])
-        sheet1.write(i + 1, 2, addresses[add]['y'])
-        for j, field in enumerate(additional_fields):
-            sheet1.write(i + 1, j + 3, addresses[add][field])
-
-    wb.save(OUTPUT_NAME)
-
+    writer = ExcelWriter(OUTPUT_NAME)
+    df = pd.DataFrame(df)
+    df.to_excel(writer, SHEET_NAME)
+    writer.save()
