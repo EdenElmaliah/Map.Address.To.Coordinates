@@ -11,7 +11,7 @@ import os
 import sys
 from tqdm import tqdm
 
-KEY = 'AIzaSyAPNZ3OfLPiOXpKKbcHd28vLvgSOea6Gm8'  # Enter here a valid google API key
+KEY = ''  # Enter here a valid google API key
 COLUMNS = ['Tag']  # change here according to your columns in the original file (additional columns)
 SHEET_NAME = "Sheet 1"
 OUTPUT_NAME = "output_example.xlsx"
